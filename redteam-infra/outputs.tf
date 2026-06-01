@@ -63,3 +63,28 @@ output "get_gophish_password_cmd" {
   description = "Run on the GoPhish host to retrieve the initial admin password"
   value       = "journalctl -u gophish | grep -i 'please login'"
 }
+
+output "evilginx_public_ip" {
+  description = "Evilginx public IP (set as NS glue; ACME/DNS land here)"
+  value       = aws_instance.evilginx.public_ip
+}
+
+output "evilginx_private_ip" {
+  description = "Evilginx private IP (redirector forwards here)"
+  value       = aws_instance.evilginx.private_ip
+}
+
+output "evilginx_redirector_public_ip" {
+  description = "L4 redirector public IP (point phishing hostname A record here)"
+  value       = var.enable_evilginx_redirector ? aws_instance.evilginx_redirector[0].public_ip : "redirector disabled"
+}
+
+output "evilginx_domain" {
+  value = var.evilginx_domain != "" ? var.evilginx_domain : "not configured"
+}
+
+# Attach to the Evilginx console via the bastion to configure phishlets/lures.
+output "evilginx_console_access" {
+  description = "SSH to Evilginx (via bastion), then: sudo tmux attach -t evilginx"
+  value       = "ssh -J ubuntu@${aws_instance.bastion.public_ip} ubuntu@${aws_instance.evilginx.private_ip}"
+}
