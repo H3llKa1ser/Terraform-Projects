@@ -197,3 +197,105 @@ resource "aws_security_group_rule" "dnsrd_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.dns_redirector.id
 }
+
+# ============================================================
+#  GOPHISH SG  — fully private. Admin via bastion, phishing via redirector.
+# ============================================================
+resource "aws_security_group" "gophish" {
+  name        = "${var.engagement_name}-gophish-sg"
+  description = "GoPhish phishing server - private only"
+  vpc_id      = aws_vpc.rt.id
+  tags        = { Name = "${var.engagement_name}-gophish-sg" }
+}
+
+# SSH ONLY from the bastion
+resource "aws_security_group_rule" "gp_ssh_from_bastion" {
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.bastion.id
+  security_group_id        = aws_security_group.gophish.id
+  description              = "SSH from bastion only"
+}
+
+# Admin UI ONLY from the bastion (operators tunnel through it)
+resource "aws_security_group_rule" "gp_admin_from_bastion" {
+  type                     = "ingress"
+  from_port                = var.gophish_admin_port
+  to_port                  = var.gophish_admin_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.bastion.id
+  security_group_id        = aws_security_group.gophish.id
+  description              = "GoPhish admin UI from bastion (via SSH tunnel)"
+}
+
+# Phishing landing pages ONLY from the phishing redirector
+resource "aws_security_group_rule" "gp_phish_from_redirector" {
+  type                     = "ingress"
+  from_port                = var.gophish_phish_port
+  to_port                  = var.gophish_phish_port
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.phish_redirector.id
+  security_group_id        = aws_security_group.gophish.id
+  description              = "Landing page traffic from phishing redirector only"
+}
+
+resource "aws_security_group_rule" "gp_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.gophish.id
+  description       = "Outbound for SMTP relay, updates"
+}
+
+# ============================================================
+#  PHISHING REDIRECTOR SG  — public HTTPS in, SSH from bastion
+# ============================================================
+resource "aws_security_group" "phish_redirector" {
+  name        = "${var.engagement_name}-phishredir-sg"
+  description = "Public phishing landing redirector"
+  vpc_id      = aws_vpc.rt.id
+  tags        = { Name = "${var.engagement_name}-phishredir-sg" }
+}
+
+resource "aws_security_group_rule" "pr_ssh_from_bastion" {
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.bastion.id
+  security_group_id        = aws_security_group.phish_redirector.id
+  description              = "SSH from bastion only"
+}
+
+resource "aws_security_group_rule" "pr_https_public" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.phish_redirector.id
+  description       = "HTTPS landing page traffic"
+}
+
+resource "aws_security_group_rule" "pr_http_public" {
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.phish_redirector.id
+  description       = "HTTP for ACME / redirect"
+}
+
+resource "aws_security_group_rule" "pr_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.phish_redirector.id
+}
