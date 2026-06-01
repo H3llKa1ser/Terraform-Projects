@@ -10,6 +10,21 @@
 
 # then point your C2 client at localhost:31337
 
+# 3. Access GoPhish
+
+# Tunnel the admin UI through the bastion
+
+    ssh -J ubuntu@<bastion_ip> -L 3333:<gophish_private_ip>:3333 ubuntu@<gophish_private_ip>
+
+# Then browse to:
+
+    #   https://localhost:3333
+    # (accept the self-signed cert)
+
+# Get the initial admin password (run on the GoPhish box):
+
+    journalctl -u gophish | grep -i "please login"
+
 Or add this to ~/.ssh/config to make it seamless:
 
     Host rt-bastion
@@ -21,6 +36,12 @@ Or add this to ~/.ssh/config to make it seamless:
         User ubuntu
         ProxyJump rt-bastion
         LocalForward 31337 <team_server_private_ip>:31337
+
+    Host rt-gophish
+        HostName <gophish_private_ip>
+        User ubuntu
+        ProxyJump rt-bastion
+        LocalForward 3333 <gophish_private_ip>:3333
 
 Then just: ssh rt-teamserver.
 
