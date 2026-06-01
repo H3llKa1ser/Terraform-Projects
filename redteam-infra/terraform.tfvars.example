@@ -8,11 +8,18 @@ operator_cidrs = [
   "198.51.100.25/32",
 ]
 
+# C2
 c2_listener_port  = 443
 dns_listener_port = 53
 
-# DNS / HTTP redirector domains — MUST be in RoE scope
-# redirector_domain    = "cdn.example-engagement.com"
-# dns_c2_domain        = "tunnel.example-engagement.com"
+# GoPhish
+gophish_admin_port = 3333
+gophish_phish_port = 8080
+
+# Domains — MUST all be in RoE scope
+# redirector_domain = "cdn.example-engagement.com"
+# dns_c2_domain     = "tunnel.example-engagement.com"
+# phishing_domain   = "secure-login.example-engagement.com"
+
 # cloudflare_api_token = "xxxxx"
 # cloudflare_zone_id   = "xxxxx"
