@@ -45,6 +45,8 @@ Or add this to ~/.ssh/config to make it seamless:
 
 Then just: ssh rt-teamserver.
 
+Then ssh rt-gophish and open https://localhost:3333.
+
 # Operational notes specific to this design
 
 1) Team server is unreachable from the internet. SSH only via bastion; HTTPS C2 only via the HTTP redirector; DNS C2 only via the DNS redirector. Every ingress is source_security_group_id-scoped, not CIDR-open.
