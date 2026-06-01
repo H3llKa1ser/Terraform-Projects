@@ -102,3 +102,28 @@ variable "phishing_domain" {
   type        = string
   default     = ""
 }
+
+# ---------- Evilginx ----------
+variable "evilginx_instance_type" {
+  type    = string
+  default = "t3.small"
+}
+
+# Base domain Evilginx serves phishlets from. Its NS records MUST be
+# delegated to the Evilginx host. MUST be in RoE scope.
+variable "evilginx_domain" {
+  description = "Domain Evilginx is authoritative for (e.g. secure-portal.example.com)"
+  type        = string
+  default     = ""
+}
+
+# Toggle the L4 TCP passthrough redirector that fronts Evilginx.
+variable "enable_evilginx_redirector" {
+  type    = bool
+  default = true
+}
+
+variable "evilginx_redirector_instance_type" {
+  type    = string
+  default = "t3.micro"
+}
