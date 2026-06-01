@@ -37,3 +37,29 @@ output "tunnel_c2_console" {
   description = "Forward team server C2 console to localhost:31337"
   value       = "ssh -J ubuntu@${aws_instance.bastion.public_ip} -L 31337:${aws_instance.team_server.private_ip}:31337 ubuntu@${aws_instance.team_server.private_ip}"
 }
+
+output "gophish_private_ip" {
+  description = "GoPhish private IP (reachable only via bastion / redirector)"
+  value       = aws_instance.gophish.private_ip
+}
+
+output "phish_redirector_public_ip" {
+  description = "Phishing redirector public IP"
+  value       = aws_instance.phish_redirector.public_ip
+}
+
+output "phishing_domain" {
+  value = var.phishing_domain != "" ? var.phishing_domain : "not configured"
+}
+
+# Tunnel the GoPhish admin UI through the bastion to your localhost.
+output "tunnel_gophish_admin" {
+  description = "Forward GoPhish admin UI to https://localhost:3333"
+  value = "ssh -J ubuntu@${aws_instance.bastion.public_ip} -L ${var.gophish_admin_port}:${aws_instance.gophish.private_ip}:${var.gophish_admin_port} ubuntu@${aws_instance.gophish.private_ip}"
+}
+
+# Retrieve the auto-generated GoPhish admin password.
+output "get_gophish_password_cmd" {
+  description = "Run on the GoPhish host to retrieve the initial admin password"
+  value       = "journalctl -u gophish | grep -i 'please login'"
+}
