@@ -78,3 +78,27 @@ variable "dns_c2_domain" {
   type        = string
   default     = ""
 }
+
+variable "gophish_instance_type" {
+  type    = string
+  default = "t3.small"
+}
+
+# GoPhish admin UI port (kept private, reached via bastion tunnel)
+variable "gophish_admin_port" {
+  type    = number
+  default = 3333
+}
+
+# GoPhish phishing/landing page port (served behind the redirector)
+variable "gophish_phish_port" {
+  type    = number
+  default = 8080
+}
+
+# Phishing landing domain (MUST be in RoE scope)
+variable "phishing_domain" {
+  description = "FQDN for the phishing landing pages"
+  type        = string
+  default     = ""
+}
