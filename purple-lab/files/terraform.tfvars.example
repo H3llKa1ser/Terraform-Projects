@@ -1,0 +1,14 @@
+lab_name   = "purple-lab"
+aws_region = "eu-central-1"
+
+ssh_public_key = "ssh-ed25519 AAAA... operator@laptop"
+
+operator_cidrs = [
+  "203.0.113.10/32",
+]
+
+# Sizing (Wazuh is RAM-hungry; t3.large is a sensible floor)
+siem_instance_type    = "t3.large"
+target_instance_type  = "t3.small"
+caldera_instance_type = "t3.medium"
+bastion_instance_type = "t3.micro"
