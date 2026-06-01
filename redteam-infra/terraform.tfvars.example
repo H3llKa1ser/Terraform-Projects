@@ -1,0 +1,18 @@
+engagement_name = "engagement-001"
+aws_region      = "eu-central-1"
+
+ssh_public_key = "ssh-ed25519 AAAA... operator@laptop"
+
+operator_cidrs = [
+  "203.0.113.10/32",
+  "198.51.100.25/32",
+]
+
+c2_listener_port  = 443
+dns_listener_port = 53
+
+# DNS / HTTP redirector domains — MUST be in RoE scope
+# redirector_domain    = "cdn.example-engagement.com"
+# dns_c2_domain        = "tunnel.example-engagement.com"
+# cloudflare_api_token = "xxxxx"
+# cloudflare_zone_id   = "xxxxx"
