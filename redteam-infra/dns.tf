@@ -33,3 +33,15 @@ resource "cloudflare_record" "dns_delegation" {
   ttl     = 120
   comment = "Delegate DNS C2 zone to redirector: ${var.engagement_name}"
 }
+
+# --- Phishing landing domain A record -> phishing redirector ---
+resource "cloudflare_record" "phish_redirector" {
+  count   = var.phishing_domain != "" ? 1 : 0
+  zone_id = var.cloudflare_zone_id
+  name    = var.phishing_domain
+  type    = "A"
+  content = aws_instance.phish_redirector.public_ip
+  proxied = false
+  ttl     = 120
+  comment = "Authorized phishing engagement: ${var.engagement_name}"
+}
