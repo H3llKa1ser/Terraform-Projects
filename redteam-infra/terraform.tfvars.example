@@ -16,6 +16,15 @@ dns_listener_port = 53
 gophish_admin_port = 3333
 gophish_phish_port = 8080
 
+# ---------- Evilginx ----------
+evilginx_instance_type             = "t3.small"
+evilginx_redirector_instance_type  = "t3.micro"
+enable_evilginx_redirector         = true
+
+# Domain Evilginx is authoritative for. MUST be in RoE scope.
+# Its NS records get delegated to the Evilginx host.
+# evilginx_domain = "secure-portal.example-engagement.com"
+
 # Domains — MUST all be in RoE scope
 # redirector_domain = "cdn.example-engagement.com"
 # dns_c2_domain     = "tunnel.example-engagement.com"
