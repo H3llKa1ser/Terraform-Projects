@@ -66,4 +66,3 @@ The `31337` port and the heredoc comments (e.g., *"Sliver/Mythic console"*) are 
 2. Change the `31337` references (in `security_groups.tf` and the `outputs.tf` tunnel command) to your framework's operator/console port.
 3. Make sure the C2's listeners **bind to the team server's private IP** so the redirectors can reach them.
 
-Which framework are you planning to use? I can tailor the ports and the redirector profile (e.g., a Cobalt Strike Malleable-aware Nginx config, or Mythic's port layout) so it drops in cleanly.
