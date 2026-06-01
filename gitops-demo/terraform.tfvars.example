@@ -1,0 +1,8 @@
+cloudflare_account_id = "your-account-id"
+github_owner          = "your-github-username"
+github_repo           = "gitops-demo"
+project_name          = "gitops-demo"
+
+# Optional:
+# custom_domain      = "demo.example.com"
+# cloudflare_zone_id = "your-zone-id"
