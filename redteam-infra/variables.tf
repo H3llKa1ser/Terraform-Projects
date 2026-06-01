@@ -54,3 +54,27 @@ variable "redirector_domain" {
   type        = string
   default     = ""
 }
+
+variable "bastion_instance_type" {
+  type    = string
+  default = "t3.micro"
+}
+
+variable "dns_redirector_instance_type" {
+  type    = string
+  default = "t3.micro"
+}
+
+# DNS-beacon listener port on the team server
+variable "dns_listener_port" {
+  type    = number
+  default = 53
+}
+
+# Operator's DNS C2 domain (NS-delegated to the DNS redirector).
+# Must be in your RoE scope.
+variable "dns_c2_domain" {
+  description = "Domain delegated for DNS C2 (e.g., ns.example-engagement.com)"
+  type        = string
+  default     = ""
+}
