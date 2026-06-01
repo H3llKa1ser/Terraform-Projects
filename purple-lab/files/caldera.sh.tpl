@@ -46,3 +46,5 @@ systemctl enable --now caldera.service
 
 echo "Caldera provisioned on :8888 : $(date -u)" > /var/log/provision-status.log
 echo "Default creds (insecure mode): see /opt/caldera/conf/default.yml (red/blue users)" >> /var/log/provision-status.log
+
+# Note: --insecure uses Caldera's default config with built-in users (red/admin, etc.). For anything beyond an isolated lab, generate a hardened config with strong credentials. Since the UI is only reachable via the bastion tunnel here, the lab exposure is contained. 
