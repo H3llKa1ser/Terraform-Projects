@@ -38,3 +38,32 @@ Then just: ssh rt-teamserver.
 
 6) Teardown: terraform destroy, then remove any registrar-side NS delegation and rotate tokens.
 
+The Terraform code I wrote is **C2-agnostic** — it doesn't install or assume any specific C2 framework. It only stands up the *hosting infrastructure* (hardened hosts, network, redirectors, bastion). You install and configure the actual C2 yourself after provisioning.
+
+That said, here's where the config makes C2-shaped assumptions you'd need to match to whatever you run:
+
+## What the code assumes (and where to adjust)
+
+| Setting | Default | What it maps to |
+|---|---|---|
+| `c2_listener_port` | `443` | Your C2's **HTTPS listener** port on the team server |
+| `dns_listener_port` | `53` | Your C2's **DNS listener** port on the team server |
+| C2 console port | `31337` | The **management/operator console** port (the SG rule + SSH tunnel use this) |
+| Redirector proxy | Nginx → `https://<team_server>:443` | Forwards HTTP(S) beacons to the C2's HTTPS listener |
+| DNS redirector | `socat` UDP/TCP 53 → team server | Forwards DNS beacons to the C2's DNS listener |
+
+The `31337` port and the heredoc comments (e.g., *"Sliver/Mythic console"*) are just illustrative placeholders — I picked them as examples, not because the code targets a particular framework.
+
+## Matching it to common frameworks
+
+- **Sliver** — HTTPS + DNS listeners are native; multiplayer/operator port is typically **31337**, so the defaults line up almost directly. Probably the least adjustment needed.
+- **Mythic** — Web UI/operator interface runs on a different port (often 7443); you'd change the console SG rule + tunnel port, and HTTP/DNS C2 profiles come from your chosen Mythic C2 profile (e.g., `http`, `dns`).
+- **Cobalt Strike** — Team server uses **50050** for the client; HTTPS/DNS listeners are defined via Malleable C2 profiles. You'd change `31337 → 50050` and align the redirector profile to your Malleable config.
+- **Havoc / Covenant / etc.** — Same idea: adjust the console port and listener ports.
+
+## To adapt it
+1. Set `c2_listener_port` / `dns_listener_port` to your framework's listener ports.
+2. Change the `31337` references (in `security_groups.tf` and the `outputs.tf` tunnel command) to your framework's operator/console port.
+3. Make sure the C2's listeners **bind to the team server's private IP** so the redirectors can reach them.
+
+Which framework are you planning to use? I can tailor the ports and the redirector profile (e.g., a Cobalt Strike Malleable-aware Nginx config, or Mythic's port layout) so it drops in cleanly.
