@@ -27,12 +27,12 @@
 
 ## Run locally (optional)
 
-cp terraform.tfvars.example terraform.tfvars
-export CLOUDFLARE_API_TOKEN=xxxx
-terraform init
-terraform plan
-terraform apply
+      cp terraform.tfvars.example terraform.tfvars
+      export CLOUDFLARE_API_TOKEN=xxxx
+      terraform init
+      terraform plan
+      terraform apply
 
 ## Tear down
 
-terraform destroy
+      terraform destroy
